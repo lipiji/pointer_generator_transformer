@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-cudaid = 6
+cudaid = 1
 os.environ["CUDA_VISIBLE_DEVICES"] = str(cudaid)
 
 import sys
@@ -22,9 +22,9 @@ from utils_pg import *
 from configs import *
 from optim import Optim
 
-cfg = DeepmindConfigs()
-TRAINING_DATASET_CLS = DeepmindTraining
-TESTING_DATASET_CLS = DeepmindTesting
+cfg = SighanConfigs()
+TRAINING_DATASET_CLS = SighanTraining
+TESTING_DATASET_CLS = SighanTesting
 
 def print_basic_info(modules, consts, options):
     if options["is_debugging"]:
@@ -117,7 +117,7 @@ def init_modules():
     consts["lr"] = cfg.LR
     consts["beam_size"] = cfg.BEAM_SIZE
 
-    consts["max_epoch"] = 50 if options["is_debugging"] else 64 
+    consts["max_epoch"] = 1000 if options["is_debugging"] else 1000
     consts["print_time"] = 2
     consts["save_epoch"] = 1
 

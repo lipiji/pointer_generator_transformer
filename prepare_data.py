@@ -12,7 +12,7 @@ import string
 import struct
 
 def run(d_type, d_path):
-    prepare_deepmind(d_path)
+    prepare_sighan(d_path)
 
 stop_words = {"-lrb-", "-rrb-", "-"}
 unk_words = {"unk", "<unk>"}
@@ -32,9 +32,9 @@ def load_lines(d_path, f_name,  configs):
     with open(f_path, 'r') as f:
         for line in f:
             line = line.strip("\n").lower()
-            fs = line.split("<summ-content>")
-            if len(fs) == 2:
-                xy_tuple = get_xy_tuple(fs[1], fs[0], configs)
+            fs = line.split("\t")
+            if len(fs) == 3:
+                xy_tuple = get_xy_tuple(fs[0], fs[1], configs)
             else:
                 print("ERROR:" + line)
                 continue
@@ -82,7 +82,7 @@ def del_num(s):
 def read_cont(f_cont, cfg):
     lines = []
     line = f_cont #del_num(f_cont)
-    words = line.split()
+    words = [w for w in line]
     num_words = len(words)
     if num_words >= cfg.MIN_LEN_X and num_words < cfg.MAX_LEN_X:
         lines += words
@@ -91,24 +91,9 @@ def read_cont(f_cont, cfg):
     lines += [cfg.W_EOS]
     return (lines, f_cont) if len(lines) >= cfg.MIN_LEN_X and len(lines) <= cfg.MAX_LEN_X+1 else None
 
-def abstract2sents(abstract, cfg):
-  cur = 0
-  sents = []
-  while True:
-    try:
-      start_p = abstract.index(cfg.W_LS, cur)
-      end_p = abstract.index(cfg.W_RS, start_p + 1)
-      cur = end_p + len(cfg.W_RS)
-      sents.append(abstract[start_p+len(cfg.W_LS):end_p])
-    except ValueError as e: # no more sentences
-      return sents
-
 def read_head(f_head, cfg):
     lines = []
-
-    sents = abstract2sents(f_head, cfg)
-    line = ' '.join(sents)
-    words = line.split()
+    words = [w for w in f_head]
     num_words = len(words)
     if num_words >= cfg.MIN_LEN_Y and num_words <= cfg.MAX_LEN_Y:
         lines += words
@@ -116,10 +101,10 @@ def read_head(f_head, cfg):
     elif num_words > cfg.MAX_LEN_Y: # do not know if should be stoped
         lines = words[0 : cfg.MAX_LEN_Y + 1] # one more word.
     
-    return (lines, sents) if len(lines) >= cfg.MIN_LEN_Y and len(lines) <= cfg.MAX_LEN_Y+1  else None
+    return (lines, [f_head]) if len(lines) >= cfg.MIN_LEN_Y and len(lines) <= cfg.MAX_LEN_Y+1  else None
 
-def prepare_deepmind(d_path):
-    configs = DeepmindConfigs()
+def prepare_sighan(d_path):
+    configs = SighanConfigs()
     TRAINING_PATH = configs.cc.TRAINING_DATA_PATH
     VALIDATE_PATH = configs.cc.VALIDATE_DATA_PATH
     TESTING_PATH = configs.cc.TESTING_DATA_PATH
@@ -172,7 +157,7 @@ def prepare_deepmind(d_path):
     all_dic1 = {}
     all_dic2 = {}
     dic_list = []
-    all_dic1, dic_list = load_dict(d_path, "vocab", all_dic1, dic_list)
+    all_dic1, dic_list = load_dict(d_path, "vocab.txt", all_dic1, dic_list)
     all_dic2 = to_dict(train_xy_list, all_dic2)
     for w, tf in all_dic2.items():
         if w not in all_dic1:
@@ -215,7 +200,7 @@ def prepare_deepmind(d_path):
     test_xy_list = load_lines(d_path, "test.txt", configs)
 
     print ("validset...")
-    valid_xy_list = load_lines(d_path, "val.txt", configs)
+    valid_xy_list = load_lines(d_path, "dev.txt", configs)
 
 
     print ("#train = ", len(train_xy_list))
@@ -226,12 +211,9 @@ def prepare_deepmind(d_path):
 
     print ("dump test...")
     pickle.dump(test_xy_list, open(TESTING_PATH + "test.pkl", "wb"), protocol = pickle.HIGHEST_PROTOCOL)
-    shuffle(test_xy_list)
-    pickle.dump(test_xy_list[0:2000], open(TESTING_PATH + "pj2000.pkl", "wb"), protocol = pickle.HIGHEST_PROTOCOL)
 
     print ("dump validate...")
     pickle.dump(valid_xy_list, open(VALIDATE_PATH + "valid.pkl", "wb"), protocol = pickle.HIGHEST_PROTOCOL)
-    pickle.dump(valid_xy_list[0:1000], open(VALIDATE_PATH + "pj1000.pkl", "wb"), protocol = pickle.HIGHEST_PROTOCOL)
     
     print ("done.")
 
@@ -240,8 +222,8 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--data", default="cnndm", help="dataset path", )
     args = parser.parse_args()
 
-    data_type = "cnndm"
-    raw_path = "./data/"
+    data_type = "sighan"
+    raw_path = "../data/SIGHAN15/"
 
     print (data_type, raw_path)
     run(data_type, raw_path)

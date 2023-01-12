@@ -17,25 +17,25 @@ class CommonConfigs(object):
         self.TMP_PATH = self.ROOT_PATH + d_type + "/tmp/"
 
 
-class DeepmindTraining(object):
+class SighanTraining(object):
     IS_UNICODE = False
     REMOVES_PUNCTION = False
     HAS_Y = True
-    BATCH_SIZE = 20
+    BATCH_SIZE = 100
 
-class DeepmindTesting(object):
+class SighanTesting(object):
     IS_UNICODE = False
     HAS_Y = True
-    BATCH_SIZE = 80
-    MIN_LEN_PREDICT = 35
-    MAX_LEN_PREDICT = 120
+    BATCH_SIZE = 100
+    MIN_LEN_PREDICT = 1
+    MAX_LEN_PREDICT = 128
     MAX_BYTE_PREDICT = None
     PRINT_SIZE = 500
     REMOVES_PUNCTION = False
 
-class DeepmindConfigs():
+class SighanConfigs():
     
-    cc = CommonConfigs("cnndm")
+    cc = CommonConfigs("sighan")
     FIRE = False
 
     CELL = "transformer"
@@ -63,17 +63,17 @@ class DeepmindConfigs():
     NUM_H = 8 # multi-head attention
     DROPOUT = 0.2
     NUM_L = 4 # num of layers
-    MIN_LEN_X = 10
-    MIN_LEN_Y = 10
-    MAX_LEN_X = 400
-    MAX_LEN_Y = 100
+    MIN_LEN_X = 1
+    MIN_LEN_Y = 1
+    MAX_LEN_X = 128
+    MAX_LEN_Y = 128
     MIN_NUM_X = 1
     MAX_NUM_X = 1
     MAX_NUM_Y = None
 
     NUM_Y = 1
 
-    UNI_LOW_FREQ_THRESHOLD = 10
+    UNI_LOW_FREQ_THRESHOLD = 0
 
     PG_DICT_SIZE = 50000 # dict for acl17 paper: pointer-generator
     
