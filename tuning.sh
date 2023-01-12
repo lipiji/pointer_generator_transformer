@@ -1,5 +1,5 @@
 #!/bin/bash
-FILES=./cnndm/model/*
+FILES=./sighan/model/*
 for f in $FILES; do
     echo "==========================" ${f##*/}
     python -u main.py ${f##*/}

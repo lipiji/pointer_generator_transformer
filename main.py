@@ -423,11 +423,11 @@ def run(existing_model_name = None):
             model.cuda()
         optimizer = torch.optim.Adagrad(model.parameters(), lr=consts["lr"], initial_accumulator_value=0.1)
         
-        model_name = "".join(["cnndm.s2s.", options["cell"]])
+        model_name = "".join(["s2s.", options["cell"]])
         existing_epoch = 0
         if need_load_model:
             if existing_model_name == None:
-                existing_model_name = "cnndm.s2s.transformer.gpu0.epoch27.2"
+                existing_model_name = "s2s.transformer.final.gpu1.epoch999.3"
             print ("loading existed model:", existing_model_name)
             model, optimizer = load_model(cfg.cc.MODEL_PATH + existing_model_name, model, optimizer)
 
@@ -512,7 +512,7 @@ def run(existing_model_name = None):
                         print ("finished")
                 else:
                     print ("optimization finished")
-                    break
+                    #break
 
             print ("save final model... "),
             file_name = model_name + ".final.gpu" + str(consts["idx_gpu"]) + ".epoch" + str(epoch // consts["save_epoch"] + existing_epoch) + "." + str(num_partial)
